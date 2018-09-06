@@ -55,6 +55,9 @@ and sends them to Elasticsearch.
 **Note:** in order for Fluentd to work, every Kubernetes node must be labeled
 with `beta.kubernetes.io/fluentd-ds-ready=true`, as otherwise the Fluentd
 DaemonSet will ignore them.
+```
+kubectl label nodes <nodename> beta.kubernetes.io/fluentd-ds-ready=true
+```
 
 Learn more in the [official Kubernetes documentation][k8sElasticsearchDocs].
 
