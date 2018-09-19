@@ -302,76 +302,77 @@ data:
       tag cluster-autoscaler
     </source>
 
-    # Logs from systemd-journal for interesting services.
-    # TODO(random-liu): Remove this after cri container runtime rolls out.
-    <source>
-      @id journald-docker
-      @type systemd
-      matches [{ "_SYSTEMD_UNIT": "docker.service" }]
-      <storage>
-        @type local
-        persistent true
-        path /var/log/journald-docker.pos
-      </storage>
-      read_from_head true
-      tag docker
-    </source>
+    # # commenting out due to windows not having journal support
+    # # Logs from systemd-journal for interesting services.
+    # # TODO(random-liu): Remove this after cri container runtime rolls out.
+    # <source>
+    #   @id journald-docker
+    #   @type systemd
+    #   matches [{ "_SYSTEMD_UNIT": "docker.service" }]
+    #   <storage>
+    #     @type local
+    #     persistent true
+    #     path /var/log/journald-docker.pos
+    #   </storage>
+    #   read_from_head true
+    #   tag docker
+    # </source>
 
-    <source>
-      @id journald-container-runtime
-      @type systemd
-      matches [{ "_SYSTEMD_UNIT": "{{ container_runtime }}.service" }]
-      <storage>
-        @type local
-        persistent true
-        path /var/log/journald-container-runtime.pos
-      </storage>
-      read_from_head true
-      tag container-runtime
-    </source>
+    # <source>
+    #   @id journald-container-runtime
+    #   @type systemd
+    #   matches [{ "_SYSTEMD_UNIT": "{{ container_runtime }}.service" }]
+    #   <storage>
+    #     @type local
+    #     persistent true
+    #     path /var/log/journald-container-runtime.pos
+    #   </storage>
+    #   read_from_head true
+    #   tag container-runtime
+    # </source>
 
-    <source>
-      @id journald-kubelet
-      @type systemd
-      matches [{ "_SYSTEMD_UNIT": "kubelet.service" }]
-      <storage>
-        @type local
-        persistent true
-        path /var/log/journald-kubelet.pos
-      </storage>
-      read_from_head true
-      tag kubelet
-    </source>
+    # <source>
+    #   @id journald-kubelet
+    #   @type systemd
+    #   matches [{ "_SYSTEMD_UNIT": "kubelet.service" }]
+    #   <storage>
+    #     @type local
+    #     persistent true
+    #     path /var/log/journald-kubelet.pos
+    #   </storage>
+    #   read_from_head true
+    #   tag kubelet
+    # </source>
 
-    <source>
-      @id journald-node-problem-detector
-      @type systemd
-      matches [{ "_SYSTEMD_UNIT": "node-problem-detector.service" }]
-      <storage>
-        @type local
-        persistent true
-        path /var/log/journald-node-problem-detector.pos
-      </storage>
-      read_from_head true
-      tag node-problem-detector
-    </source>
+    # <source>
+    #   @id journald-node-problem-detector
+    #   @type systemd
+    #   matches [{ "_SYSTEMD_UNIT": "node-problem-detector.service" }]
+    #   <storage>
+    #     @type local
+    #     persistent true
+    #     path /var/log/journald-node-problem-detector.pos
+    #   </storage>
+    #   read_from_head true
+    #   tag node-problem-detector
+    # </source>
 
-    <source>
-      @id kernel
-      @type systemd
-      matches [{ "_TRANSPORT": "kernel" }]
-      <storage>
-        @type local
-        persistent true
-        path /var/log/kernel.pos
-      </storage>
-      <entry>
-        fields_strip_underscores true
-        fields_lowercase true
-      </entry>
-      read_from_head true
-      tag kernel
-    </source>
+    # <source>
+    #   @id kernel
+    #   @type systemd
+    #   matches [{ "_TRANSPORT": "kernel" }]
+    #   <storage>
+    #     @type local
+    #     persistent true
+    #     path /var/log/kernel.pos
+    #   </storage>
+    #   <entry>
+    #     fields_strip_underscores true
+    #     fields_lowercase true
+    #   </entry>
+    #   read_from_head true
+    #   tag kernel
+    # </source>
 
   forward.input.conf: |-
     # Takes the messages sent over TCP
@@ -418,6 +419,8 @@ data:
     # Enriches records with Kubernetes metadata
     <filter kubernetes.**>
       @type kubernetes_metadata
+      verify_ssl false
+      kubernetes_url http://10.159.14.173:8080/api
     </filter>
 
     <match **>
@@ -426,7 +429,7 @@ data:
       @log_level info
       type_name fluentd
       include_tag_key true
-      host elasticsearch-logging
+      host 192.168.1.108
       port 9200
       logstash_format true
       <buffer>

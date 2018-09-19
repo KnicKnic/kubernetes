@@ -21,19 +21,21 @@ spec:
     spec:
       containers:
       - name: kibana-logging
-        image: docker.elastic.co/kibana/kibana-oss:6.3.2
-        resources:
-          # need more cpu upon initialization, therefore burstable class
-          limits:
-            cpu: 1000m
-          requests:
-            cpu: 100m
+        image: kibana:1
+        # resources:
+        #   # need more cpu upon initialization, therefore burstable class
+        #   limits:
+        #     cpu: 1000m
+        #   requests:
+        #     cpu: 100m
         env:
           - name: ELASTICSEARCH_URL
-            value: http://elasticsearch-logging:9200
+            value: http://192.168.1.108:9200
           - name: SERVER_BASEPATH
             value: /api/v1/namespaces/kube-system/services/kibana-logging/proxy
         ports:
         - containerPort: 5601
           name: ui
           protocol: TCP
+      nodeSelector:
+        beta.kubernetes.io/os: "windows"
