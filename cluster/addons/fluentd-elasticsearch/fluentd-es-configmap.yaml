@@ -419,8 +419,8 @@ data:
     # Enriches records with Kubernetes metadata
     <filter kubernetes.**>
       @type kubernetes_metadata
-      verify_ssl false
-      kubernetes_url http://10.159.14.173:8080/api
+      #verify_ssl false
+      #kubernetes_url http://10.159.14.173:8080/api
     </filter>
 
     <match **>
@@ -429,7 +429,8 @@ data:
       @log_level info
       type_name fluentd
       include_tag_key true
-      host 192.168.1.108
+      host elasticsearch-logging
+      #host 192.168.1.108
       port 9200
       logstash_format true
       <buffer>
