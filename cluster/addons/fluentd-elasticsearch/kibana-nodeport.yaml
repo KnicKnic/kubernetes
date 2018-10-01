@@ -14,7 +14,6 @@ spec:
   - name: kibana-outside
     port: 5601
     protocol: TCP
-    targetPort: ui
     nodePort: 30010
   selector:
     k8s-app: kibana-logging
