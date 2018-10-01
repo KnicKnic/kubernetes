@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fluentd-es-v2.2.0123
+  namespace: kube-system
+  labels:
+    k8s-app: fluentd-es
+    version: v2.2.0
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
+spec:
+  restartPolicy: Never
+  priorityClassName: system-node-critical
+  serviceAccountName: fluentd-es
+  containers:
+  - name: fluentd-es
+    image: fluentd-kube:1
+    env:
+    - name: FLUENTD_ARGS
+      value: --no-supervisor -q
+    # - name: KUBERNETES_SERVICE_HOST
+    #   value: "10.159.14.173"
+    # - name: KUBERNETES_SERVICE_PORT
+    #   value: "8080"
+    # resources:
+    #   limits:
+    #     memory: 500Mi
+    #   requests:
+    #     cpu: 100m
+    #     memory: 200Mi
+    volumeMounts:
+    - name: varlog
+      mountPath: /var/log
+    - name: programdatadockercontainers
+      mountPath: /ProgramData/docker/containers
+      readOnly: true
+    - name: config-volume
+      mountPath: /etc/fluent/config.d
+  nodeSelector:
+    beta.kubernetes.io/fluentd-ds-ready: "true"
+    beta.kubernetes.io/os: "windows"
+  terminationGracePeriodSeconds: 30
+  volumes:
+  - name: varlog
+    hostPath:
+      path: /var/log
+  - name: programdatadockercontainers
+    hostPath:
+      path: /ProgramData/docker/containers
+  - name: config-volume
+    configMap:
+      name: fluentd-es-config-v0.1.5
